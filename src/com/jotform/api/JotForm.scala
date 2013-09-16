@@ -90,7 +90,7 @@ class JotForm() {
 		resp = client.execute(req)
     } else if (method == "POST") {
 	    var req = new HttpPost(baseURL + apiVersion + path)
-	    // req.addHeader("apiKey", apiKey)
+	    req.addHeader("apiKey", apiKey)
 	    
 	    if(parameters != null){
       	    val nameValuePairs = new ArrayList[NameValuePair](parameters.size)
@@ -450,6 +450,16 @@ class JotForm() {
  */
   def getFormReports(formID: Long): JSONObject = {
     return executeGetRequest("/form/" + formID.toString() + "/reports")
+  }
+  
+/**
+ * Create new report of a form
+ * @param formID Form ID is the numbers you see on a form URL. You can get form IDs when you call /user/forms.
+ * @param report Report details. List type, title etc.
+ * @return Returns report details and URL.
+ */
+  def createReport(formID: Long, report: Map[String, String]): JSONObject = {
+    return executePostRequest("/form/" + formID.toString() + "/reports", report)
   }
   
  /**
