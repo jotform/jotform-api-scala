@@ -1,7 +1,3 @@
-jotform-api-scala
-=================
-
-JotForm API - Scala Client
 jotform-api-scala 
 ===============
 [JotForm API](http://api.jotform.com/docs/) - Scala Client
