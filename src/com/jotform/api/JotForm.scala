@@ -107,9 +107,10 @@ class JotForm() {
     	resp = client.execute(req)
     }
     
-    var statusCode = resp.getStatusLine().getStatusCode()
-    
-    return new JSONObject(Source.fromInputStream(resp.getEntity().getContent()).getLines.reduceLeft(_ + _))
+    var result: JSONObject = new JSONObject(Source.fromInputStream(resp.getEntity().getContent()).getLines.reduceLeft(_ + _))
+    checkResponseStatus(resp.getStatusLine().getStatusCode(), result)
+    	
+    return result
   }
   
   private def executeHttpRequest(path: String, parameters: JSONObject, method: String): JSONObject = {
@@ -129,9 +130,24 @@ class JotForm() {
     
     resp = client.execute(req);
     
-    var statusCode: Int = resp.getStatusLine().getStatusCode();
-
-    return new JSONObject(Source.fromInputStream(resp.getEntity().getContent()).getLines.reduceLeft(_ + _));
+    var result: JSONObject = new JSONObject(Source.fromInputStream(resp.getEntity().getContent()).getLines.reduceLeft(_ + _))
+    checkResponseStatus(resp.getStatusLine().getStatusCode(), result)
+    	
+    return result
+  }
+  
+  private def checkResponseStatus(statusCode: Int, response: JSONObject) {
+      if(statusCode != 200) {
+      var exp: JotFormException = new JotFormException("400")
+      
+      statusCode match {
+        case 400 => throw exp.create(response.get("message").toString())
+        case 404 => throw exp.create(response.get("message").toString())
+        case 401 => throw exp.create("Unauthorized API call")
+        case 503 => throw exp.create("Service is unavailable, rate limits etc exceeded!")
+        case _ => throw exp.create(response.get("info").toString())
+      }
+    }
   }
 
   private def executeGetRequest(path: String, parameters: Map[String, String] = null): JSONObject = {
