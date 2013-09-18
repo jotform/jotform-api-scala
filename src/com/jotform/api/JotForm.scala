@@ -167,7 +167,7 @@ class JotForm() {
   }
   
   private def createConditions(offset: Int, limit: Int, filter: Map[String, String], orderBy: String): Map[String, String] = {
-    var args: Map[String, String] = Map("offset" -> offset.toString(), "limit" -> limit.toString(), "order_by" -> orderBy)
+    var args: Map[String, String] = Map("offset" -> offset.toString(), "limit" -> limit.toString(), "orderby" -> orderBy)
     
     var parameters: Map[String, String] = Map()
     
