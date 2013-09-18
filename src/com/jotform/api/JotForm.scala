@@ -497,7 +497,7 @@ class JotForm() {
     var parameters: Map[String, String] = Map()
     
     submission.keys.foreach{ key =>
-      if(key contains "_"){
+      if((key contains "_") && (key != "created_at")){
         parameters += "submission[" + key.substring(0, (key indexOf "_")) + "][" + key.substring((key indexOf "_") + 1) + "]" -> submission(key)
       } else {
         parameters += "submission[" + key + "]" -> submission(key)
