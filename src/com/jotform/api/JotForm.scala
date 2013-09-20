@@ -28,6 +28,9 @@ import org.apache.http.message.BasicHeader
 import org.apache.http.message.BasicNameValuePair
 import org.apache.http.protocol.HTTP
 import org.apache.http.entity.StringEntity
+import org.apache.http.client.methods.HttpRequestBase
+import org.apache.http.client.utils.URIBuilder
+
 import org.json._
 
 import scala.io.Source
@@ -36,6 +39,7 @@ import scala.collection.Map
 import java.io._
 import java.io.InputStream
 import java.util.ArrayList
+import java.net.URI
 
 class JotForm() {
   private var apiKey: String = null
@@ -73,21 +77,17 @@ class JotForm() {
     }
     
     if(method == "GET") {
-    	var parametersStr: String = ""
-    	if(parameters != null) {
-    	  parametersStr = "?"
-    	  parameters.keys.foreach{ key =>
-    	    parametersStr = parametersStr + key + "=" + parameters(key)
-    	    
-    	    if(parameters.last._1 != key){
-    	      parametersStr = parametersStr + "&"
-    	    }
-    	  }
-    	}
-      
-		var req = new HttpGet(baseURL + apiVersion + path + parametersStr)
+		var req = new HttpGet(baseURL + apiVersion + path)
 		req.addHeader("apiKey", apiKey)
-		resp = client.execute(req)
+		
+        var uri: URI = null
+        var ub: URIBuilder = new URIBuilder(req.getURI())
+        
+        parameters.keys.foreach{key =>
+          uri = ub.addParameter(key, parameters(key)).build()
+        }
+    	req.setURI(uri)
+    	resp = client.execute(req)
     } else if (method == "POST") {
 	    var req = new HttpPost(baseURL + apiVersion + path)
 	    req.addHeader("apiKey", apiKey)
@@ -176,19 +176,12 @@ class JotForm() {
         parameters += key -> args(key)
       }
     }
-    
+
     if(filter != null) {
-      var filterStr: String = ""
-      
-      filter.keys.foreach{ key =>
-        filterStr = filterStr + "%7b%22" + key + "%22:%22" + filter(key).replace(" ", "%20") + "%22%7d"
-        
-        if(filter.last._1 != key) {
-          filterStr = filterStr + ","
-        }
-      }
-      parameters += "filter" -> filterStr
-    }
+		var filterObject: JSONObject  = new JSONObject(filter)
+		parameters += "filter" -> filterObject.toString()
+	}
+
     return parameters
   }
 
