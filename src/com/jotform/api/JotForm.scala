@@ -83,10 +83,13 @@ class JotForm() {
         var uri: URI = null
         var ub: URIBuilder = new URIBuilder(req.getURI())
         
-        parameters.keys.foreach{key =>
-          uri = ub.addParameter(key, parameters(key)).build()
-        }
-    	req.setURI(uri)
+		if(parameters != null) {
+	        parameters.keys.foreach{key =>
+	          uri = ub.addParameter(key, parameters(key)).build()
+	        }
+	        req.setURI(uri)
+		}
+
     	resp = client.execute(req)
     } else if (method == "POST") {
 	    var req = new HttpPost(baseURL + apiVersion + path)
@@ -642,6 +645,14 @@ class JotForm() {
  */
   def loginUser(credentials: Map[String, String]): JSONObject = {
 	return executePostRequest("/user/login", credentials)
+  }
+  
+ /**
+ * Logout user
+ * @returns Returns status of request
+ */
+  def logoutUser(): JSONObject = {
+    return executeGetRequest("/user/logout")
   }
     
 /**
