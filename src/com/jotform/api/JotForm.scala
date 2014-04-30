@@ -663,6 +663,15 @@ class JotForm() {
   def getPlan(planName: String): JSONObject = {
     return executeGetRequest("/system/plan/" + planName)
   }
+
+   /**
+   * Delete a single report
+   * @param reportID You can get a list of reports from /user/reports.
+   * @return Returns status of request.
+   */
+    def deleteReport(reportID: Long): JSONObject = {
+    return executeDeleteRequest("/report/" + reportID.toString())
+    }
 }
 
 
