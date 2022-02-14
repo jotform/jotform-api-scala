@@ -437,6 +437,62 @@ class JotForm() {
   }
 
  /**
+ * Create a folder
+ * @param folderProperties Properties of new folder.
+ * @return Returns folder details.
+ */
+  def createFolder(folderProperties: Map[String, String]): JSONObject = {
+    return executePostRequest("/folder", folderProperties)
+  }
+
+ /**
+ * Delete a folder and its subfolders
+ * @param folderID You can get a list of folders from /user/folders.
+ * @return Returns status of the request.
+ */
+  def deleteFolder(folderID: String): JSONObject = {
+    return executeDeleteRequest("/folder/" + folderID)
+  }
+
+  /**
+  * Update a specific folder.
+  * @param folderID You can get folder IDs when you call /user/folders.
+  * @param folderProperties New properties of the specified folder.
+  * @return Returns properties of the updated folder.
+  */
+  def updateFolder(folderID: String, folderProperties: JSONObject): JSONObject = {
+    return executePutRequest("/folder/" + folderID, folderProperties)
+  }
+
+  /**
+  * Add forms to the specified folder.
+  * @param  $folderID You can get the list of folders from /user/folders.
+  * @param  $formIDs You can get the list of forms from /user/forms.
+  * @return Returns properties of the updated folder.
+  */
+  def addFormsToFolder(folderID: String, formIDs: String*): JSONObject = {
+    val folder: HashMap[String, Object] = new HashMap[String, Object]()
+    folder.put("forms", formIDs)
+    val data: JSONObject = new JSONObject(folder)
+
+    return updateFolder(folderID, data);
+  }
+
+  /**
+  * Add a form to the specified folder.
+  * @param  $folderID You can get the list of folders from /user/folders.
+  * @param  $formID You can get the list of forms from /user/forms.
+  * @return Returns properties of the updated folder.
+  */
+  def addFormToFolder(folderID: String, formID: String): JSONObject = {
+    val folder: HashMap[String, Object] = new HashMap[String, Object]()
+    folder.put("forms", Array(formID))
+    val data: JSONObject = new JSONObject(folder)
+
+    return updateFolder(folderID, data);
+  }
+
+ /**
  * Get a list of all properties on a form.
  * @param formID Form ID is the numbers you see on a form URL. You can get form IDs when you call /user/forms.
  * @return Returns form properties like width, expiration date, style etc.
